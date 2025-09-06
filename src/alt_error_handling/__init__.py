@@ -36,3 +36,4 @@ __all__ = [
     "PACKAGE_NAME",
     "PACKAGE_VERSION",
 ]
+

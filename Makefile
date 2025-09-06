@@ -68,8 +68,21 @@ install-dev:
 
 publish-test: build
 	@echo "Publishing to TestPyPI..."
-	./scripts/publish_pypi.sh test
+	@if [ -f ./scripts/publish_pypi.sh ]; then \
+		./scripts/publish_pypi.sh test; \
+	else \
+		. venv/bin/activate && twine upload --repository testpypi dist/*; \
+	fi
 
 publish-prod: build
 	@echo "Publishing to production PyPI..."
-	./scripts/publish_pypi.sh prod
+	@if [ -f ./scripts/publish_pypi.sh ]; then \
+		./scripts/publish_pypi.sh prod; \
+	else \
+		@echo "WARNING: This will publish to production PyPI!"; \
+		@read -p "Continue? [y/N] " -n 1 -r; \
+		@echo; \
+		@if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+			. venv/bin/activate && twine upload dist/*; \
+		fi \
+	fi
