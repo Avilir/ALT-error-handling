@@ -246,11 +246,9 @@ class TestErrorContext:
 
     def test_context_manager_wraps_exception(self) -> None:
         """Test context manager wraps exceptions with context."""
-        with (
-            pytest.raises(ErrorHandlingError) as exc_info,
-            error_context("database operation", user_id=123),
-        ):
-            raise ValueError("Connection failed")
+        with pytest.raises(ErrorHandlingError) as exc_info:  # noqa: SIM117
+            with error_context("database operation", user_id=123):
+                raise ValueError("Connection failed")
 
         assert "Error during database operation" in str(exc_info.value)
         assert "Connection failed" in str(exc_info.value)
@@ -263,22 +261,18 @@ class TestErrorContext:
         class DatabaseError(Exception):
             pass
 
-        with (
-            pytest.raises(DatabaseError) as exc_info,
-            error_context("query execution", DatabaseError),
-        ):
-            raise ValueError("SQL error")
+        with pytest.raises(DatabaseError) as exc_info:  # noqa: SIM117
+            with error_context("query execution", DatabaseError):
+                raise ValueError("SQL error")
 
         assert "Error during query execution" in str(exc_info.value)
         assert isinstance(exc_info.value.__cause__, ValueError)
 
     def test_context_manager_preserves_same_type(self) -> None:
         """Test context manager preserves exception if already correct type."""
-        with (
-            pytest.raises(ErrorHandlingError) as exc_info,
-            error_context("operation", ErrorHandlingError),
-        ):
-            raise ErrorHandlingError("Original error", {"key": "value"})
+        with pytest.raises(ErrorHandlingError) as exc_info:  # noqa: SIM117
+            with error_context("operation", ErrorHandlingError):
+                raise ErrorHandlingError("Original error", {"key": "value"})
 
         # Should reraise the original without wrapping
         assert str(exc_info.value) == "Original error"

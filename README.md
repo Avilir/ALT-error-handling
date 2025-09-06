@@ -19,7 +19,7 @@ Advanced error handling utilities for Python applications, providing decorators 
 ## Installation
 
 ```bash
-pip install alt-error-handling
+pip install ALT-error-handling
 ```
 
 For development:
