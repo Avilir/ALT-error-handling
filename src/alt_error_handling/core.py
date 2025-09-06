@@ -343,3 +343,4 @@ def format_exception_chain(e: Exception, include_traceback: bool = False) -> str
             parts.append("Caused by:")
 
     return "\n".join(parts)
+
